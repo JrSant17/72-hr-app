@@ -14,7 +14,7 @@ function CreateAccount() {
 
     const handleCreateAccount = async () => {
         try {
-            let response = await fetch("http://localhost:8080/users", {
+            let response = await fetch("http://localhost:8080/createUser", {
                 method: "POST",
                 headers: {
                     Accept: "application/json",
@@ -48,13 +48,13 @@ function CreateAccount() {
 
     return (
         <>
-            {/* Conditional rendering based on account creation status */}
+
             {!accountCreated ? (
                 <div>
                     <h1>Inventory Home Page</h1>
                     <h2>Create Account</h2>
-    
-                    {/* Form to create a new account */}
+
+
                     <div>
                         <label htmlFor="first_name">First Name</label>
                         <input
@@ -100,12 +100,12 @@ function CreateAccount() {
                             Create Account
                         </button>
                     </div>
-    
-                    {/* Error or success message */}
+
+
                     {errorMessage && <p style={{ color: "red" }}>{errorMessage}</p>}
                     {accountCreated && <p>Account created successfully!</p>}
-    
-                    {/* Links for existing users or visitors */}
+
+
                     <h3>
                         Already have an account? <Link to="/login">Log In</Link>
                     </h3>
