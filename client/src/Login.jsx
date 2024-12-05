@@ -24,7 +24,7 @@ function Login({ setUserId }) {
 
             console.log(result);
 
-            if (response.ok && result.message === "Login successful.") {
+            if (response.ok) {
 
                 setUserId(result.userId);
                 navigate("/inventory");

@@ -1,13 +1,15 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 
 function Inventory({ userId }) {
     const [inventoryData, setInventoryData] = useState([]);
 
     const [inventoryValues, setInventoryValues] = useState({
+        id: 0,
         item_name: "",
         description: "",
         quantity: 0,
+        
     });
 
     const navigate = useNavigate();
@@ -21,7 +23,7 @@ function Inventory({ userId }) {
                 return res.json();
             })
             .then((data) => {
-                setInventoryData(data.inventory || []);
+                setInventoryData(data.inventory);
             })
             .catch((error) => {
                 console.error("Error fetching inventory:", error);
@@ -69,7 +71,7 @@ function Inventory({ userId }) {
 
     const handleDeleteItem = (itemId) => {
         if (!itemId) {
-            //debugging issues - user ID is missing
+            //debugging issues - item ID missing
             console.error("Item ID is missing.");
             return;
         }
@@ -84,17 +86,17 @@ function Inventory({ userId }) {
         })
             .then((response) => {
                 if (response.ok) {
-                    console.log("Item deleted successfully!");
+                    // console.log("Item deleted"); - debug
 
                     setInventoryData((prevData) =>
                         prevData.filter((item) => item.id !== itemId)
                     );
                 } else {
-                    console.error("Error deleting inventory:", response);
+                    console.error(response);
                 }
             })
             .catch((error) => {
-                console.error("Error deleting inventory:", error);
+                console.error(error);
             });
     };
 
@@ -108,7 +110,7 @@ function Inventory({ userId }) {
                     <table>
                         <thead>
                             <tr>
-                                <th>User ID</th>
+                                <th>Item ID</th>
                                 <th>Item Name</th>
                                 <th>Item Quantity</th>
                                 <th>Item Description</th>
@@ -116,13 +118,16 @@ function Inventory({ userId }) {
                             </tr>
                         </thead>
                         <tbody>
-                            {inventoryData.map((item) => (
-                                <tr key={item.id}>
-                                    <td>{item.user_id}</td>
+                            {inventoryData.map((item, index) => (
+                                <tr key={index}>
+                                    <td>{item.id}</td>
                                     <td>{item.item_name}</td>
                                     <td>{item.quantity}</td>
                                     <td>{item.description}</td>
                                     <td>
+                                        <Link to={`/inventory/details/${item.id}`}>
+                                            <button>Details</button>
+                                        </Link>
                                         <button onClick={() => handleEditItem(item)}>Edit</button>
                                         <button onClick={() => handleDeleteItem(item.id)}>Delete</button>
                                     </td>

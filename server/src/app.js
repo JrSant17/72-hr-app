@@ -21,7 +21,7 @@ app.listen(port, () => {
     console.log('Your Knex and Express application are running successfully.');
 });
 
-
+//get all inventory - test - and for visitor page
 app.get('/inventory', (req, res) => {
     knex('item')
         .select('*')
@@ -31,7 +31,7 @@ app.get('/inventory', (req, res) => {
         });
 });
 
-
+//get all users - test
 app.get('/users', (req, res) => {
     knex('user')
         .select('*')
@@ -41,23 +41,23 @@ app.get('/users', (req, res) => {
         });
 });
 
+//post new account
 app.post('/createUser', async (req, res) => {
     const { first_name, last_name, username, password } = req.body;
 
     try {
         if (!first_name || !last_name || !username || !password) {
-            return res.status(400).json({
+            return res.json({
                 accountCreated: false,
-                message: "All fields are required.",
             });
         }
 
+        //fixes unique key constraint - duplicate user primary key
         const maxIdResult = await knex('user').max('id as max_id').first();
         const maxId = maxIdResult.max_id || 0;
 
         await knex.raw(`
-            SELECT setval('public.user_id_seq', ?, false);
-        `, [maxId + 1]);
+            SELECT setval('public.user_id_seq', ?, false);`, [maxId + 1]);
 
         await knex('user')
             .insert({
@@ -67,22 +67,21 @@ app.post('/createUser', async (req, res) => {
                 password: password,
             });
 
-        res.status(201).json({ accountCreated: true });
+        res.json({ accountCreated: true });
+        
     } catch (err) {
-        console.error("Error creating account:", err);
-        res.status(500).json({
-            accountCreated: false,
-            message: err.message || "An error occurred while creating the account.",
-        });
+        console.error(err);
+        res.json({accountCreated: false});
     }
 });
 
+//login with existing user
 app.post("/existingUser", async (req, res) => {
     const { username, password } = req.body;
 
     try {
         if (!username || !password) {
-            return res.status(400).json({ message: "Username and password are required." });
+            return res.json("Username and password are required.");
         }
 
         const user = await knex("user")
@@ -91,34 +90,35 @@ app.post("/existingUser", async (req, res) => {
             .first();
 
         if (!user) {
-            return res.status(404).json({ message: "User not found." });
+            return res.json({ message: "User not found." });
         }
 
         const isPasswordValid = password === user.password;
         if (!isPasswordValid) {
-            return res.status(401).json({ message: "Invalid password." });
+            return res.json({ message: "Invalid password." });
         }
 
-        res.status(200).json({
+        res.json({
             message: "Login successful.",
             userId: user.id,
             username: user.username
         });
     } catch (error) {
-        console.error("Error during login:", error);
-        res.status(500).json({ message: "An error occurred during login." });
+        console.error(error);
+        res.json({ message: "An error occurred during login." });
     }
 });
 
+//get only user inventory by user id
 app.get("/inventory/:userId", (req, res) => {
     const { userId } = req.params;
 
     if (!userId || isNaN(userId)) {
-        return res.status(400).json({ message: "Invalid user ID." });
+        return res.json({ message: "Invalid user ID." });
     }
 
     knex("item")
-        .select('user_id', 'item_name', 'description', 'quantity')
+        .select('id', 'user_id', 'item_name', 'description', 'quantity')
         .where("user_id", userId)
         .then((inventory) => {
             const inventoryWithTruncatedDescriptions = inventory.map(item => ({
@@ -129,16 +129,19 @@ app.get("/inventory/:userId", (req, res) => {
             return res.json({ inventory: inventoryWithTruncatedDescriptions || [] });
         })
         .catch((err) => {
-            console.error("Error fetching inventory:", err);
-            return res.status(500).json({ message: "Error fetching inventory" });
+            console.error(err);
+            return res.json({ message: "Error fetching inventory" });
         });
 });
 
+//add new inventory item
 app.post('/inventory/:userId', async (req, res) => {
     const { userId } = req.params;
     const { item_name, description, quantity } = req.body;
 
     try {
+
+        //fixes unique key constraint - duplicate item primary key
         const maxIdResult = await knex('item').max('id as max_id').first();
         const maxId = maxIdResult.max_id || 0;
 
@@ -152,11 +155,12 @@ app.post('/inventory/:userId', async (req, res) => {
 
         res.json({ newItem });
     } catch (err) {
-        console.error('Error adding inventory:', err);
-        res.status(500).send('Error adding inventory');
+        console.error(err);
+        res.json('Error adding inventory');
     }
 });
 
+//edit inventory item - fix bugs
 app.put('/inventory/:userId/:itemId', (req, res) => {
     const { userId, itemId } = req.params;
     const { item_name, description, quantity } = req.body;
@@ -170,16 +174,16 @@ app.put('/inventory/:userId/:itemId', (req, res) => {
             res.json({ updatedItem });
         })
         .catch((err) => {
-            console.error('Error updating inventory:', err);
-            res.status(500).send('Error updating inventory');
+            console.error(err);
         });
 });
 
-
+//delete inventory item
 app.delete('/inventory/:userId/:itemId', (req, res) => {
     const { userId, itemId } = req.params;
 
-    console.log("Attempting to delete item:", { userId, itemId });
+    // debug delete issue
+    // console.log("Attempting to delete item:", { userId, itemId });
 
 
     knex('item')
@@ -187,10 +191,27 @@ app.delete('/inventory/:userId/:itemId', (req, res) => {
         .andWhere('user_id', userId)
         .del()
         .then(() => {
-            res.status(200).send('Item deleted');
+            res.json('Item deleted');
         })
         .catch((err) => {
-            console.error('Error deleting inventory:', err);
-            res.status(500).send('Error deleting inventory');
+        res.json('Error deleting item');
+        });
+});
+
+//get inventory item details
+app.get('/inventory/item/:itemId', (req, res) => {
+    const { itemId } = req.params;
+
+    knex('item')
+        .where( 'id', itemId )
+        .first()
+        .then(item => {
+            if (!item) {
+                return res.status(404).json(err);
+            }
+            res.json({ item });
+        })
+        .catch((error) => {
+            console.error(error);
         });
 });

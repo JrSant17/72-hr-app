@@ -3,7 +3,6 @@ import { Link } from "react-router-dom";
 
 function CreateAccount() {
     const [accountCreated, setAccountCreated] = useState(false);
-    const [errorMessage, setErrorMessage] = useState("");
 
     const [formValues, setFormValues] = useState({
         first_name: "",
@@ -23,18 +22,19 @@ function CreateAccount() {
                 body: JSON.stringify(formValues),
             });
             const result = await response.json();
-            console.log("This is the response on the frontend:", result);
+            console.log(result);
 
             if (response.ok && result.accountCreated) {
                 setAccountCreated(true);
-                setErrorMessage("");
+
             } else {
                 setAccountCreated(false);
-                setErrorMessage(result.error || "Account creation failed.");
+                alert('Account Creation Failed')
+
             }
         } catch (error) {
-            console.error("Error creating account:", error);
-            setErrorMessage("An error occurred while creating the account.");
+            console.error(error);
+
         }
     };
 
@@ -51,7 +51,7 @@ function CreateAccount() {
 
             {!accountCreated ? (
                 <div>
-                    <h1>Inventory Home Page</h1>
+                    <h1>Inventory Landing Page</h1>
                     <h2>Create Account</h2>
 
 
@@ -101,9 +101,7 @@ function CreateAccount() {
                         </button>
                     </div>
 
-
-                    {errorMessage && <p style={{ color: "red" }}>{errorMessage}</p>}
-                    {accountCreated && <p>Account created successfully!</p>}
+                    {/* {accountCreated && <p>Account created successfully!</p>} */}
 
 
                     <h3>
