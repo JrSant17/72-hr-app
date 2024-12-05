@@ -103,7 +103,7 @@ function Inventory({ userId }) {
     return (
         <>
             <div>
-                <h1>Welcome to User {userId}'s Inventory</h1>
+                <h1>Welcome to User {userId} Manager's Inventory</h1>
             </div>
             <div>
                 {inventoryData && inventoryData.length > 0 ? (
@@ -178,8 +178,13 @@ function Inventory({ userId }) {
                 </button>
             </div>
             <div>
+                <button type="button" onClick={() => navigate('/visitor')}>
+                    View all Inventory
+                </button>
+            </div>
+            <div>
                 <button type="button" onClick={() => navigate('/')}>
-                    Home
+                    Back to Landing Page
                 </button>
             </div>
         </>

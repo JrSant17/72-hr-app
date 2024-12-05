@@ -100,10 +100,6 @@ function CreateAccount() {
                             Create Account
                         </button>
                     </div>
-
-                    {/* {accountCreated && <p>Account created successfully!</p>} */}
-
-
                     <h3>
                         Already have an account? <Link to="/login">Log In</Link>
                     </h3>

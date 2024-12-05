@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 
 function VisitorInventory() {
@@ -13,10 +13,13 @@ function VisitorInventory() {
 
     }, []);
 
+
+
+
     return (
         <>
             <div>
-                <h1>Visitor Inventory</h1>
+                <h1>All Inventory</h1>
             </div>
             <table>
                 <thead>
@@ -26,6 +29,7 @@ function VisitorInventory() {
                         <th>Item Name</th>
                         <th>Item Quantity</th>
                         <th>Item Description</th>
+                        <th>Actions</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -36,13 +40,16 @@ function VisitorInventory() {
                         <td>{item.item_name}</td>
                         <td>{item.quantity}</td>
                         <td>{item.description}</td>
+                        <td><Link to={`/visitor/details/${item.id}`}>
+                                <button>Details</button>
+                            </Link></td>
                     </tr>
                 )}
                 </tbody>
             </table>
 
             <h3>
-                <Link to="/">Create Account</Link>
+                <Link to="/">Home Page</Link>
             </h3>
             <h3>
                 <Link to="/login">Login</Link>
