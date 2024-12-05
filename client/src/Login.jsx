@@ -21,11 +21,12 @@ function Login({ setUserId }) {
             });
 
             const result = await response.json();
-            // used for debug
+
             console.log(result);
 
             if (response.ok && result.message === "Login successful.") {
-                setUserId(result.userId)
+
+                setUserId(result.userId);
                 navigate("/inventory");
             } else {
                 alert(result.message); 
