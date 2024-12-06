@@ -1,0 +1,44 @@
+/* CreateAccount.css */
+
+
+.create-account-page {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    background: url('https://images.pexels.com/photos/4483610/pexels-photo-4483610.jpeg') no-repeat center center fixed;
+    background-size: cover;
+    color: #fff;
+    font-family: Arial, sans-serif;
+}
+
+.landing-wrap {
+    background: rgba(0, 0, 0, 0.8); /* Dark overlay */
+    padding: 20px;
+    border-radius: 10px;
+    max-width: 400px;
+    width: 100%;
+    text-align: center;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+}
+
+
+.input-wrap {
+    margin-bottom: 15px;
+    text-align: left;
+    margin-right: 15px;
+}
+
+.input-header {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.account-input {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+

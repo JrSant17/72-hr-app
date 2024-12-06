@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import "./Login.css"
 
 function Login({ setUserId }) {
     const [formValues, setFormValues] = useState({
@@ -51,6 +52,7 @@ function Login({ setUserId }) {
             <div>
                 <label>Username:</label>
                 <input
+                    className="login-input"
                     type="text"
                     name="username"
                     value={formValues.username}
@@ -60,6 +62,7 @@ function Login({ setUserId }) {
             <div>
                 <label>Password:</label>
                 <input
+                    className="login-input"
                     type="password"
                     name="password"
                     value={formValues.password}
